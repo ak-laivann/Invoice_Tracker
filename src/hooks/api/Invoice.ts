@@ -1,4 +1,8 @@
+import { toast } from "react-toastify";
 import { useFetchData } from "../useFetch";
+import { useMutateData } from "../useMutation";
+import type { Invoice } from "../../components";
+import { useNavigate } from "react-router-dom";
 
 export function useInvoiceListing(
   page: number = 1,
@@ -28,5 +32,41 @@ export function useDashboardMetrics(fromDate: string, toDate: string) {
   return useFetchData<any>(
     ["dashboard metrics", fromDate, toDate, JSON.stringify(queryParams)],
     `dashboardMetrics?${new URLSearchParams(queryParams).toString()}`
+  );
+}
+
+export function useAddInvoice() {
+  const navigate = useNavigate();
+  const mutation = useMutateData<Invoice, {}>("invoices", {
+    onSuccess: () => {
+      toast.success("Invoice Added successfully");
+      navigate("/home");
+    },
+    onError: () => {
+      toast.error("Failed to add invoice");
+    },
+  });
+
+  return mutation;
+}
+
+export function useGetInvoice(id: string) {
+  return useFetchData<Invoice>(["invoice"], `invoices/${id}`);
+}
+
+export function useEditInvoice(id: string) {
+  const navigate = useNavigate();
+  return useMutateData(
+    `invoices/${id}`,
+    {
+      onSuccess: () => {
+        toast.success("Invoice edited successfully");
+        navigate("/home");
+      },
+      onError: () => {
+        toast.error("Failed to update invoice");
+      },
+    },
+    "PUT"
   );
 }

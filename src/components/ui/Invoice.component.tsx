@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { Invoice_Status, Submission_Status, type Invoice } from "../props";
+import {
+  Invoice_Status,
+  Submission_Status,
+  type Invoice,
+  type InvoiceFormProps,
+} from "../props";
 import {
   Card,
   Dropdown,
@@ -7,8 +12,13 @@ import {
   Segmented,
   Tag,
   Typography,
-  Tabs,
   Tooltip,
+  Form,
+  Input,
+  Button,
+  Select,
+  DatePicker,
+  InputNumber,
 } from "antd";
 import {
   BellTwoTone,
@@ -21,6 +31,9 @@ import {
   FileUnknownTwoTone,
 } from "@ant-design/icons";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import moment from "moment";
+import dayjs from "dayjs";
 
 const { Text } = Typography;
 
@@ -82,6 +95,7 @@ export const InvoiceCard = React.memo(
     data: Invoice;
     onStatusChange?: (id: string, status: string) => void;
   }) => {
+    const navigate = useNavigate();
     const { id, clientName, price, date, status } = props.data;
 
     const menu = (
@@ -110,7 +124,10 @@ export const InvoiceCard = React.memo(
 
         <div>
           {props.data.submissionStatus === Submission_Status.DRAFT ? (
-            <div className="flex items-center">
+            <div
+              className="flex items-center"
+              onClick={() => navigate(`/invoices/${props.data.id}/edit`)}
+            >
               <Tag className="border-none pt-1 pb-1 pl-3 pr-2 bg-[#F2F2F2] color-[#999999] rounded-full">
                 {Submission_Status.DRAFT}
               </Tag>
@@ -207,3 +224,116 @@ export const InvoiceFilterBar = React.memo(
     );
   }
 );
+
+export const InvoiceForm = React.memo((props: InvoiceFormProps) => {
+  const [form] = Form.useForm();
+
+  const handleFinish = (values: any) => {
+    const invoice: Invoice = {
+      clientId: values.clientId,
+      id: props.mode === "CREATE" ? undefined : values.id,
+      clientName: values.clientName,
+      price: {
+        currency: values.currency,
+        value: values.value,
+      },
+      date: values.date?.format("YYYY-MM-DD"),
+      status: values.status,
+      submissionStatus: submissionStatus,
+    };
+
+    props.onSubmit(invoice);
+  };
+
+  const [submissionStatus, setSubmissionStatus] = useState(
+    Submission_Status.DRAFT
+  );
+
+  return (
+    <>
+      <Form
+        disabled={props.disabled}
+        form={form}
+        layout="vertical"
+        initialValues={{
+          ...props.initialValues,
+          price: {
+            currency: props.initialValues.price.currency,
+            value: props.initialValues.price.value,
+          },
+          date: props.initialValues.date
+            ? dayjs(props.initialValues.date)
+            : undefined,
+        }}
+        onFinish={handleFinish}
+      >
+        <Form.Item
+          label="Client Name"
+          name="clientName"
+          rules={[{ required: true, message: "Please enter client name" }]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          label="Currency"
+          name={["price", "currency"]}
+          rules={[{ required: true, message: "Please select currency" }]}
+        >
+          <Select>
+            <Select.Option value="$">USD</Select.Option>
+            <Select.Option value="₹">INR</Select.Option>
+            <Select.Option value="€">EUR</Select.Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item
+          label="Amount"
+          name={["price", "value"]}
+          rules={[{ required: true, message: "Please enter amount" }]}
+        >
+          <InputNumber min={0} style={{ width: "100%" }} />
+        </Form.Item>
+
+        <Form.Item label="Date" name="date">
+          <DatePicker style={{ width: "100%" }} />
+        </Form.Item>
+
+        <Form.Item
+          label="Status"
+          name="status"
+          rules={[{ required: true, message: "Please select status" }]}
+        >
+          <Select>
+            {Object.values(Invoice_Status).map((status) => (
+              <Select.Option key={status} value={status}>
+                {status}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+      </Form>
+      <Button
+        disabled={props.disabled}
+        type="primary"
+        onClick={() => {
+          setSubmissionStatus(Submission_Status.PUBLISHED);
+          form.submit();
+        }}
+      >
+        {props.mode === "CREATE" ? "Submit" : "Update"}
+      </Button>
+      &emsp;
+      <Button
+        disabled={props.disabled}
+        type="primary"
+        onClick={() => {
+          setSubmissionStatus(Submission_Status.DRAFT);
+          form.submit();
+        }}
+      >
+        Save as Draft
+      </Button>
+    </>
+  );
+});

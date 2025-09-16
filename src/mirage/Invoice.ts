@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { Invoice_Status, Submission_Status, type Invoice } from "../components";
 import type { RouteHandler } from "miragejs/server";
-import type { Registry } from "miragejs";
+import { Response, type Registry } from "miragejs";
 import type { ModelRegistry } from "./MirageModels";
 
 export function createOrGetInvoice(): Invoice {
@@ -65,4 +65,36 @@ export const mockGetInvoices: RouteHandler<
     page,
     limit,
   };
+};
+
+export const mockPostInvoice: RouteHandler<
+  Registry<typeof ModelRegistry, any>
+> = (schema, request) => {
+  const attrs = JSON.parse(request.requestBody);
+
+  const newInvoice = schema.create("invoice", attrs);
+  return newInvoice.attrs;
+};
+
+export const mockGetInvoice: RouteHandler<
+  Registry<typeof ModelRegistry, any>
+> = (schema, request) => {
+  const invoiceId = request.params.id;
+  const data = schema.find("invoice", invoiceId);
+  return data?.attrs as any;
+};
+
+export const mockPutInvoice: RouteHandler<
+  Registry<typeof ModelRegistry, any>
+> = (schema, request) => {
+  const id = request.params.id;
+  const attrs = JSON.parse(request.requestBody);
+  const invoice = schema.find("invoice", id);
+
+  if (!invoice) {
+    return new Response(404, {}, { error: "Invoice not found" });
+  }
+
+  invoice.update(attrs);
+  return invoice.attrs;
 };

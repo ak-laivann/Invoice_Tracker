@@ -24,3 +24,10 @@ export enum Submission_Status {
   PUBLISHED = "PUBLISHED",
   DRAFT = "DRAFT",
 }
+
+export interface InvoiceFormProps {
+  mode: "CREATE" | "UPDATE";
+  initialValues?: Partial<Invoice>;
+  onSubmit: (values: Invoice) => void;
+  disabled: boolean;
+}
