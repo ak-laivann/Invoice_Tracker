@@ -1,12 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { Invoice_Status, Submission_Status, type Invoice } from "../props";
-import { Card, Dropdown, Menu, Tag, Typography } from "antd";
+import {
+  Card,
+  Dropdown,
+  Menu,
+  Segmented,
+  Tag,
+  Typography,
+  Tabs,
+  Tooltip,
+} from "antd";
 import {
   BellTwoTone,
   CaretDownFilled,
-  DownOutlined,
   EditOutlined,
-  ExclamationCircleOutlined,
+  CheckCircleTwoTone,
+  CloseCircleTwoTone,
+  ClockCircleTwoTone,
+  HourglassTwoTone,
+  FileUnknownTwoTone,
 } from "@ant-design/icons";
 import styled from "styled-components";
 
@@ -85,8 +97,6 @@ export const InvoiceCard = React.memo(
       />
     );
 
-    console.log(props.data.status);
-
     return (
       <CardWrapper>
         <div>
@@ -143,7 +153,7 @@ export const InvoiceListingComponent = React.memo(
     onStatusChange?: (id: string, status: string) => void;
   }) => {
     return (
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {props?.invoices?.map((invoice) => (
           <InvoiceCard
             key={invoice?.id}
@@ -151,6 +161,92 @@ export const InvoiceListingComponent = React.memo(
             onStatusChange={props.onStatusChange}
           />
         ))}
+      </div>
+    );
+  }
+);
+
+const statusIcons: Record<Invoice_Status, React.ReactNode> = {
+  [Invoice_Status.PAID]: <CheckCircleTwoTone twoToneColor="#52c41a" />,
+  [Invoice_Status.DISPUTED]: <CloseCircleTwoTone twoToneColor="#ff4d4f" />,
+  [Invoice_Status.OVERDUE]: <ClockCircleTwoTone twoToneColor="#faad14" />,
+  [Invoice_Status.PARTIALLY_PAID]: <HourglassTwoTone twoToneColor="#1890ff" />,
+  [Invoice_Status.AWAITED]: <ClockCircleTwoTone twoToneColor="#722ed1" />,
+  [Invoice_Status.NONE]: <FileUnknownTwoTone twoToneColor="#8c8c8c" />,
+};
+
+export const InvoiceFilterBar = React.memo(
+  (props: {
+    onChange: (filters: { status?: string; submission?: string }) => void;
+  }) => {
+    const iconSize = { fontSize: "22px" };
+    const [activeStatus, setActiveStatus] = useState<string>("all");
+    const [activeSubmission, setActiveSubmission] = useState<string>("all");
+
+    const statusOptions = [
+      {
+        label: (
+          <Tooltip title="All">
+            <span>All</span>
+          </Tooltip>
+        ),
+        value: "all",
+        icon: <FileUnknownTwoTone style={iconSize} />,
+      },
+      ...Object.values(Invoice_Status).map((status) => ({
+        label: (
+          <Tooltip title={status}>
+            <span>{status}</span>
+          </Tooltip>
+        ),
+        value: status,
+        icon: React.cloneElement(statusIcons[status] as React.ReactElement, {
+          // @ts-ignore
+          style: iconSize,
+        }),
+      })),
+    ];
+
+    const submissionTabs = [
+      { label: "All", key: "all" },
+      ...Object.values(Submission_Status).map((status) => ({
+        label: status,
+        key: status,
+      })),
+    ];
+
+    return (
+      <div>
+        <Segmented
+          size="large"
+          options={statusOptions}
+          defaultValue="all"
+          block
+          value={activeStatus}
+          onChange={(val) => {
+            setActiveStatus(val.toString());
+            props.onChange({
+              status: val.toString(),
+              submission: activeSubmission,
+            });
+          }}
+        />
+        <br />
+        <Tabs
+          className="p-2"
+          items={submissionTabs.map((tab) => ({
+            label: tab.label,
+            key: tab.key,
+          }))}
+          defaultActiveKey="all"
+          onChange={(key) => {
+            if (key === Submission_Status.DRAFT) {
+              setActiveStatus("all");
+            }
+            setActiveSubmission(key);
+            props.onChange({ status: activeStatus, submission: key });
+          }}
+        />
       </div>
     );
   }

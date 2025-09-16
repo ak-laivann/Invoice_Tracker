@@ -24,14 +24,32 @@ export function createOrGetInvoice(): Invoice {
     submissionStatus: [Submission_Status.DRAFT, Submission_Status.PUBLISHED][
       faker.number.int({ min: 0, max: 1 })
     ],
-    date: faker.date.recent({ days: 10 }).toISOString(),
+    date: faker.date
+      .between({
+        from: "2024-06-01T00:00:00.000Z",
+        to: "2025-09-01T00:00:00.000Z",
+      })
+      .toISOString(),
   };
 }
 
 export const mockGetInvoices: RouteHandler<
   Registry<typeof ModelRegistry, any>
 > = (schema, request) => {
-  const data = schema.all("invoice").models.map((e) => e.attrs);
+  const { invoiceStatus = "all", submissionStatus = "all" } =
+    request.queryParams;
+
+  let data = schema.all("invoice").models.map((e) => e.attrs);
+
+  if (invoiceStatus !== "all") {
+    data = data.filter((inv: Invoice) => inv.status === invoiceStatus);
+  }
+
+  if (submissionStatus !== "all") {
+    data = data.filter(
+      (inv: Invoice) => inv.submissionStatus === submissionStatus
+    );
+  }
 
   const page = Number(request.queryParams.page) || 1;
   const limit = Number(request.queryParams.limit) || 10;

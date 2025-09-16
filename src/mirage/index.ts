@@ -1,6 +1,7 @@
 import { createServer } from "miragejs";
 import { ModelRegistry } from "./MirageModels";
 import { createOrGetInvoice, mockGetInvoices } from "./Invoice";
+import { mockGetDashboardMetrics } from "./Dashboad";
 
 export function makeServer() {
   return createServer({
@@ -9,6 +10,7 @@ export function makeServer() {
       this.urlPrefix = `/api/v1`;
       this.timing = 3000;
       this.get("/clients/all/invoice_listing", mockGetInvoices);
+      this.get("/dashboardMetrics", mockGetDashboardMetrics);
 
       // this guy is useful in case we want to move to real api.
       // just set use mirage to false or remove it in the api call
