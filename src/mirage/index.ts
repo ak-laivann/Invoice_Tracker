@@ -2,8 +2,10 @@ import { createServer } from "miragejs";
 import { ModelRegistry } from "./MirageModels";
 import {
   createOrGetInvoice,
+  mockChangeStatus,
   mockGetInvoice,
   mockGetInvoices,
+  mockPostBatchInvoices,
   mockPostInvoice,
   mockPutInvoice,
 } from "./Invoice";
@@ -18,9 +20,13 @@ export function makeServer() {
       this.get("/clients/all/invoice_listing", mockGetInvoices);
       this.get("/dashboardMetrics", mockGetDashboardMetrics);
 
+      this.put("/invoices/:id/changeStatus", mockChangeStatus);
+
       this.get("/invoices/:id", mockGetInvoice);
       this.post("/invoices", mockPostInvoice);
       this.put("/invoices/:id", mockPutInvoice);
+
+      this.post("/invoices/batch", mockPostBatchInvoices);
 
       // this guy is useful in case we want to move to real api.
       // just set use mirage to false or remove it in the api call

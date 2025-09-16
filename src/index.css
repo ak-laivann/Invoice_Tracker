@@ -7,6 +7,8 @@
   --bg-color: #ffffff;
   --underline-color: #a743ef;
   --pagination-color: #595959;
+  --header-bg: #fff;
+  --secondary-text-color: #00000073;
 }
 
 .dark {
@@ -14,6 +16,8 @@
   --bg-color: #1e1e1e;
   --underline-color: #a743ef;
   --pagination-color: #fff;
+  --header-bg: #1e1e1e;
+  --secondary-text-color: #fff;
 }
 
 body {
@@ -109,4 +113,8 @@ body {
 .ant-pagination-options-size-changer .ant-select-selector {
   color: var(--pagination-color);
   border-color: var(--pagination-color);
+}
+
+.ant-typography .ant-typography-secondary {
+  color: var(--secondary-text-color);
 }

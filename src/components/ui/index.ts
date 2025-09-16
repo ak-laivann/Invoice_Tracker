@@ -5,3 +5,4 @@ export * from "./Dashboard.component";
 export * from "./SparkonomyLogo";
 export * from "./Footer";
 export * from "./PlusIcon";
+export * from "./Header";

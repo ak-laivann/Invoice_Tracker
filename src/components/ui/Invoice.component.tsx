@@ -102,11 +102,11 @@ export const InvoiceCard = React.memo(
       <Menu
         onClick={({ key }) => props.onStatusChange?.(id, key)}
         items={[
-          { key: "Paid", label: "Paid" },
-          { key: "Unpaid", label: "Unpaid" },
-          { key: "Disputed", label: "Disputed" },
-          { key: "Partially Paid", label: "Partially Paid" },
-          { key: "Overdue", label: "Overdue" },
+          { key: Invoice_Status.PAID, label: "Paid" },
+          { key: Invoice_Status.AWAITED, label: "Unpaid" },
+          { key: Invoice_Status.DISPUTED, label: "Disputed" },
+          { key: Invoice_Status.PARTIALLY_PAID, label: "Partially Paid" },
+          { key: Invoice_Status.OVERDUE, label: "Overdue" },
         ]}
       />
     );

@@ -45,7 +45,11 @@ export const mockGetInvoices: RouteHandler<
     data = data.filter((inv: Invoice) => inv.status === invoiceStatus);
   }
 
-  if (submissionStatus !== "all") {
+  if (
+    submissionStatus &&
+    submissionStatus !== "all" &&
+    submissionStatus !== "undefined"
+  ) {
     data = data.filter(
       (inv: Invoice) => inv.submissionStatus === submissionStatus
     );
@@ -85,6 +89,49 @@ export const mockGetInvoice: RouteHandler<
 };
 
 export const mockPutInvoice: RouteHandler<
+  Registry<typeof ModelRegistry, any>
+> = (schema, request) => {
+  const id = request.params.id;
+  const attrs = JSON.parse(request.requestBody);
+  const invoice = schema.find("invoice", id);
+
+  if (!invoice) {
+    return new Response(404, {}, { error: "Invoice not found" });
+  }
+
+  invoice.update(attrs);
+  return invoice.attrs;
+};
+
+export const mockPostBatchInvoices: RouteHandler<
+  Registry<typeof ModelRegistry, any>
+> = (schema, request) => {
+  try {
+    const invoices: Invoice[] = JSON.parse(request.requestBody);
+
+    if (!Array.isArray(invoices)) {
+      return new Response(
+        400,
+        {},
+        { error: "Request body should be an array of invoices" }
+      );
+    }
+
+    const createdInvoices = invoices.map((inv) => {
+      const newInvoice = schema.create("invoice", inv);
+      return newInvoice.attrs;
+    });
+
+    return {
+      invoices: createdInvoices,
+      total: createdInvoices.length,
+    };
+  } catch (error) {
+    return new Response(400, {}, { error: "Invalid JSON format" });
+  }
+};
+
+export const mockChangeStatus: RouteHandler<
   Registry<typeof ModelRegistry, any>
 > = (schema, request) => {
   const id = request.params.id;

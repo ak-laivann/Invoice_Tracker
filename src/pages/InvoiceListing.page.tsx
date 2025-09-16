@@ -7,21 +7,28 @@ import {
   Submission_Status,
   type Invoice,
 } from "../components";
-import { useInvoiceListing } from "../hooks";
-import { useState } from "react";
+import { useChangeStatus, useInvoiceListing } from "../hooks";
+import { useEffect, useState } from "react";
 import { Excel } from "antd-table-saveas-excel";
 import type { IExcelColumn } from "antd-table-saveas-excel/app";
 
-export const InvoiceListingPage = () => {
+export const InvoiceListingPage = (props: { refetchTrigger: boolean }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [invoiceStatus, setInvoiceStatus] = useState("all");
   const [submissionStatus, setSubmissionStatus] = useState("all");
 
-  const { isLoading, isError, error, data } = useInvoiceListing(
+  const { isLoading, isError, error, data, refetch } = useInvoiceListing(
     currentPage,
     invoiceStatus,
     submissionStatus
   );
+
+  const [id, setId] = useState<string>("");
+  const { mutate } = useChangeStatus(id);
+
+  useEffect(() => {
+    refetch();
+  }, [props.refetchTrigger]);
 
   const submissionTabs = [
     { label: "All", key: "all" },
@@ -70,7 +77,10 @@ export const InvoiceListingPage = () => {
             <InvoiceCard
               key={invoice?.id}
               data={invoice}
-              onStatusChange={(id, status) => console.log(id, status)}
+              onStatusChange={(id, status) => {
+                setId(id);
+                mutate({ status });
+              }}
             />
           ))}
         </div>
@@ -100,6 +110,7 @@ const onDownload = ({
 
   const excelColumns: IExcelColumn[] = [
     { title: "Invoice ID", dataIndex: "id" },
+    { title: "Client Id", dataIndex: "clientId" },
     { title: "Client Name", dataIndex: "clientName" },
     { title: "Currency", dataIndex: ["price", "currency"] },
     { title: "Value", dataIndex: ["price", "value"] },

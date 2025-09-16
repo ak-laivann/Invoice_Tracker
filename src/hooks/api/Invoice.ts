@@ -70,3 +70,38 @@ export function useEditInvoice(id: string) {
     "PUT"
   );
 }
+
+export function useBatchPostInvoice(
+  setIsModalOpen: any,
+  setFileList: any,
+  onSuccess: () => void
+) {
+  return useMutateData<Invoice[], {}>("invoices/batch", {
+    onSuccess: () => {
+      toast.success("Invoices uploaded successfully");
+      setIsModalOpen(false);
+      setFileList([]);
+      onSuccess();
+    },
+    onError: (error) => {
+      toast.error(`Failed to upload invoices, ${error.message}`);
+    },
+  });
+}
+
+export function useChangeStatus(id: string) {
+  const navigate = useNavigate();
+  return useMutateData(
+    `invoices/${id}/changeStatus`,
+    {
+      onSuccess: () => {
+        toast.success("Invoice edited successfully");
+        navigate("/home");
+      },
+      onError: () => {
+        toast.error("Failed to update invoice");
+      },
+    },
+    "PUT"
+  );
+}
