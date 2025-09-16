@@ -1,69 +1,37 @@
-# React + TypeScript + Vite
+# Invoice Tracking
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A lightweight web application for managing and tracking invoices. The project focuses on simplicity, offering CRUD operations, data visualization, and Excel integrations, while intentionally skipping login and authentication to keep the workflow minimal.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- **Dashboard View:** Track invoice amounts over time with a simple dashboard.
+- **Invoice Listing:** A paginated table view with filtering and sorting for easy navigation.
+- **CRUD Operations:** Create, read, and update invoices using a RESTful API structure - no delete functionaility yet.
+- **Download as Excel:** Export your invoice data into an Excel file for easy sharing or record-keeping.
+- **Bulk Upload:** Import multiple invoices at once by uploading an Excel file.
+- **Pagination:** Efficiently navigate through large lists of invoices.
+- **No Login:** The application is intentionally simple, with no authentication required.
+- **Dark Mode:** A partial implementation of a dark mode is included to demonstrate the setup.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Dependencies used
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+- [x] [AntDesign](https://ant.design/) - for UI and icons
+- [x] [Faker-js](https://fakerjs.dev/) - for creating random data and simulate ai responses.
+- [x] [React](https://react.dev/) - come-on! I would have died before finishing this project if it wasn't for him. (_That's why he is the GOAT! the GOAT!!!_)
+- [x] [React-router-dom](https://reactrouter.com/) - for navigation and combining layouts through routes (SPA!).
+- [x] [React-toastify](https://www.npmjs.com/package/react-toastify) - for toast and they have custom controls too!
+- [x] [Typescript](https://www.typescriptlang.org/) - The protector. (_It was perfect! PERFECT!. Down to the last minute detail_)
+- [x] [Tansack](https://tanstack.com/) - Easy to implement Async handlings.
+- [x] [Mirage](https://miragejs.com/) - The name should tell you - MIRAGE (backend mock)
+- [x] [Tailwind CSS](https://tailwindcss.com/) - Tailwind css to ensure easy css using prefixes.
+- [x] [Vite JS](https://vite.dev/) - Using Vite for building and compiling React.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Live Deployment Link
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- [x] [Invoice Tracker Solution](https://invoice-tracker-phi.vercel.app/) - Deployed in [Vercel](https://vercel.com/)
