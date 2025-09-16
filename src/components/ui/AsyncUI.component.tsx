@@ -1,12 +1,6 @@
 import { Alert, Skeleton } from "antd";
 import React from "react";
-
-interface AsyncUIWrapperProps {
-  isLoading: boolean;
-  isError: boolean;
-  children: React.ReactNode;
-  error: Error | null;
-}
+import { type AsyncUIWrapperProps } from "../props";
 
 export const AsyncUIWrapper: React.FC<AsyncUIWrapperProps> = ({
   isLoading,

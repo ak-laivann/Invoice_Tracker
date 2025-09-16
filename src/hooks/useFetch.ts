@@ -6,7 +6,7 @@ export const useFetchData = <T>(
   options?: Omit<UseQueryOptions<T>, "queryKey" | "queryFn">
 ) => {
   return useQuery<T>({
-    queryKey: [queryKey],
+    queryKey: Array.isArray(queryKey) ? queryKey : [queryKey],
     queryFn: async () => {
       const res = await fetch(`/api/v1/${url}`, {
         headers: { useMirage: "true" },

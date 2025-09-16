@@ -1,5 +1,6 @@
-import { createServer, Response } from "miragejs";
+import { createServer } from "miragejs";
 import { ModelRegistry } from "./MirageModels";
+import { createOrGetInvoice, mockGetInvoices } from "./Invoice";
 
 export function makeServer() {
   return createServer({
@@ -7,9 +8,7 @@ export function makeServer() {
     routes() {
       this.urlPrefix = `/api/v1`;
       this.timing = 3000;
-      this.get("/testing", () => {
-        return { WTF: "WTf" };
-      });
+      this.get("/clients/all/invoice_listing", mockGetInvoices);
 
       // this guy is useful in case we want to move to real api.
       // just set use mirage to false or remove it in the api call
@@ -24,6 +23,10 @@ export function makeServer() {
       );
     },
 
-    seeds(server) {},
+    seeds(server) {
+      for (let i = 1; i <= 27; i++) {
+        server.create("invoice", createOrGetInvoice());
+      }
+    },
   });
 }

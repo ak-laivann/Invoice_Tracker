@@ -1,18 +1,10 @@
-import { AsyncUIWrapper } from "./components";
-import { useFetchData } from "./hooks";
-
-const useFetchAnything = () => {
-  return useFetchData<any>(["testing"], "testing");
-};
+import { RootRouter } from "./routes";
 
 function App() {
-  const { data, isError, error, isLoading } = useFetchAnything();
   return (
-    <>
-      <AsyncUIWrapper isLoading={isLoading} isError={isError} error={error}>
-        {data.WTF}
-      </AsyncUIWrapper>
-    </>
+    <div className="p-10">
+      <RootRouter />
+    </div>
   );
 }
 
