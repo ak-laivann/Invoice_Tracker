@@ -147,25 +147,6 @@ export const InvoiceCard = React.memo(
   }
 );
 
-export const InvoiceListingComponent = React.memo(
-  (props: {
-    invoices?: Invoice[];
-    onStatusChange?: (id: string, status: string) => void;
-  }) => {
-    return (
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {props?.invoices?.map((invoice) => (
-          <InvoiceCard
-            key={invoice?.id}
-            data={invoice}
-            onStatusChange={props.onStatusChange}
-          />
-        ))}
-      </div>
-    );
-  }
-);
-
 const statusIcons: Record<Invoice_Status, React.ReactNode> = {
   [Invoice_Status.PAID]: <CheckCircleTwoTone twoToneColor="#52c41a" />,
   [Invoice_Status.DISPUTED]: <CloseCircleTwoTone twoToneColor="#ff4d4f" />,
@@ -181,7 +162,6 @@ export const InvoiceFilterBar = React.memo(
   }) => {
     const iconSize = { fontSize: "22px" };
     const [activeStatus, setActiveStatus] = useState<string>("all");
-    const [activeSubmission, setActiveSubmission] = useState<string>("all");
 
     const statusOptions = [
       {
@@ -207,14 +187,6 @@ export const InvoiceFilterBar = React.memo(
       })),
     ];
 
-    const submissionTabs = [
-      { label: "All", key: "all" },
-      ...Object.values(Submission_Status).map((status) => ({
-        label: status,
-        key: status,
-      })),
-    ];
-
     return (
       <div>
         <Segmented
@@ -227,26 +199,10 @@ export const InvoiceFilterBar = React.memo(
             setActiveStatus(val.toString());
             props.onChange({
               status: val.toString(),
-              submission: activeSubmission,
             });
           }}
         />
         <br />
-        <Tabs
-          className="p-2"
-          items={submissionTabs.map((tab) => ({
-            label: tab.label,
-            key: tab.key,
-          }))}
-          defaultActiveKey="all"
-          onChange={(key) => {
-            if (key === Submission_Status.DRAFT) {
-              setActiveStatus("all");
-            }
-            setActiveSubmission(key);
-            props.onChange({ status: activeStatus, submission: key });
-          }}
-        />
       </div>
     );
   }

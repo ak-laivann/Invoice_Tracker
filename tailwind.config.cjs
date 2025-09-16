@@ -4,8 +4,8 @@ module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
-      colors: {
-        "gemini-bg-light": "#f0f4f9",
+      fontFamily: {
+        roboto: ["Roboto", "sans-serif"],
       },
     },
   },

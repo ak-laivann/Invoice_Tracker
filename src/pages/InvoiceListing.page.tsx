@@ -1,90 +1,38 @@
-import { useDashboardMetrics, useInvoiceListing } from "../hooks";
+import { Button, Tabs } from "antd";
 import {
-  AsyncUIWrapper,
-  DashboardMetricsCard,
-  Invoice_Status,
   InvoiceFilterBar,
-  InvoiceListingComponent,
-  MoMInvoiceChart,
+  AsyncUIWrapper,
   Pagination,
-  TimePeriodSelector,
+  InvoiceCard,
+  Submission_Status,
+  type Invoice,
 } from "../components";
+import { useInvoiceListing } from "../hooks";
 import { useState } from "react";
-
-function subtractMonths(date: Date, months: number): Date {
-  const d = new Date(date);
-  d.setMonth(d.getMonth() - months);
-  return d;
-}
-
-function subtractYears(date: Date, years: number): Date {
-  const d = new Date(date);
-  d.setFullYear(d.getFullYear() - years);
-  return d;
-}
+import { Excel } from "antd-table-saveas-excel";
+import type { IExcelColumn } from "antd-table-saveas-excel/app";
 
 export const InvoiceListingPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [invoiceStatus, setInvoiceStatus] = useState("all");
   const [submissionStatus, setSubmissionStatus] = useState("all");
 
-  const [period, setPeriod] = useState<"1M" | "3M" | "1Y" | "CUSTOM">("1M");
-  const [dateRange, setDateRange] = useState<[Date, Date]>(() => {
-    const to = new Date();
-    const from = subtractMonths(to, 1);
-    return [from, to];
-  });
-
   const { isLoading, isError, error, data } = useInvoiceListing(
     currentPage,
     invoiceStatus,
     submissionStatus
   );
-  const {
-    isLoading: isDashboardLoading,
-    isError: isDashboardError,
-    error: dashboardError,
-    data: dashboardData,
-  } = useDashboardMetrics(
-    dateRange[0].toISOString(),
-    dateRange[1].toISOString()
-  );
 
-  const handlePeriodChange = (
-    val: "1M" | "3M" | "1Y" | "CUSTOM",
-    range?: [Date, Date]
-  ) => {
-    setPeriod(val);
-    const now = new Date();
-
-    if (val === "1M") {
-      setDateRange([subtractMonths(now, 1), now]);
-    } else if (val === "3M") {
-      setDateRange([subtractMonths(now, 3), now]);
-    } else if (val === "1Y") {
-      setDateRange([subtractYears(now, 1), now]);
-    } else if (val === "CUSTOM" && range) {
-      setDateRange(range);
-    }
-  };
+  const submissionTabs = [
+    { label: "All", key: "all" },
+    ...Object.values(Submission_Status).map((status) => ({
+      label: status,
+      key: status,
+    })),
+  ];
 
   return (
     <>
-      <TimePeriodSelector value={period} onChange={handlePeriodChange} />
-      <br />
-      <AsyncUIWrapper
-        isLoading={isDashboardLoading}
-        isError={isDashboardError}
-        error={dashboardError}
-      >
-        <DashboardMetricsCard
-          paymentAwaited={dashboardData?.paymentAwaited}
-          paymentOverDue={dashboardData?.paymentOverdue}
-          totalEarnings={dashboardData?.totalEarnings}
-        />
-        <MoMInvoiceChart data={dashboardData?.dashboard} />
-      </AsyncUIWrapper>
-      <br />
       <h1 className="text-black">Your Invoices</h1>
       <br />
       <InvoiceFilterBar
@@ -94,11 +42,39 @@ export const InvoiceListingPage = () => {
         }}
       />
 
+      <Tabs
+        className="p-2"
+        items={submissionTabs.map((tab) => ({
+          label: tab.label,
+          key: tab.key,
+        }))}
+        defaultActiveKey="all"
+        onChange={(key) => {
+          setSubmissionStatus(key);
+        }}
+        tabBarExtraContent={{
+          right: (
+            <Button
+              onClick={() => {
+                onDownload({ data: data?.invoices, sheetName: invoiceStatus });
+              }}
+            >
+              Download as Excel
+            </Button>
+          ),
+        }}
+      />
       <AsyncUIWrapper isLoading={isLoading} isError={isError} error={error}>
-        <InvoiceListingComponent
-          invoices={data?.invoices ?? []}
-          onStatusChange={(id, status) => console.log(id, status)}
-        />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {data?.invoices?.map((invoice) => (
+            <InvoiceCard
+              key={invoice?.id}
+              data={invoice}
+              onStatusChange={(id, status) => console.log(id, status)}
+            />
+          ))}
+        </div>
+
         <div className="flex justify-center">
           <Pagination
             currentPage={currentPage}
@@ -108,5 +84,39 @@ export const InvoiceListingPage = () => {
         </div>
       </AsyncUIWrapper>
     </>
+  );
+};
+
+const onDownload = ({
+  data,
+  sheetName,
+}: {
+  data: Invoice[];
+  sheetName: string;
+}) => {
+  if (!data || data.length === 0) return;
+
+  const excel = new Excel();
+
+  const excelColumns: IExcelColumn[] = [
+    { title: "Invoice ID", dataIndex: "id" },
+    { title: "Client Name", dataIndex: "clientName" },
+    { title: "Currency", dataIndex: ["price", "currency"] },
+    { title: "Value", dataIndex: ["price", "value"] },
+    { title: "Date", dataIndex: "date" },
+    { title: "Status", dataIndex: "status" },
+    { title: "Submission Status", dataIndex: "submissionStatus" },
+  ];
+
+  excel
+    .addSheet(sheetName || "Invoices")
+    .addColumns(excelColumns)
+    .addDataSource(data);
+
+  const date = new Date();
+  excel.saveAs(
+    `Invoices-${sheetName}-${date.toLocaleDateString()}-${date
+      .toLocaleTimeString()
+      .replace(/:/g, "-")}.xlsx`
   );
 };
