@@ -33,7 +33,7 @@ export const InvoiceListingPage = () => {
 
   return (
     <>
-      <h1 className="text-black">Your Invoices</h1>
+      <h1 className="text-[var(--text-color)]">Your Invoices</h1>
       <br />
       <InvoiceFilterBar
         onChange={(val) => {

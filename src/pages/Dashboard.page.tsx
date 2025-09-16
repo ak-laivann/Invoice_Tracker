@@ -1,3 +1,4 @@
+import { Card } from "antd";
 import {
   AsyncUIWrapper,
   DashboardMetricsCard,
@@ -17,6 +18,14 @@ function subtractYears(date: Date, years: number): Date {
   const d = new Date(date);
   d.setFullYear(d.getFullYear() - years);
   return d;
+}
+
+function getMonthDifference(from: Date, to: Date): number {
+  return (
+    (to.getFullYear() - from.getFullYear()) * 12 +
+    (to.getMonth() - from.getMonth()) +
+    1
+  );
 }
 
 export const DashboardPage = () => {
@@ -49,9 +58,12 @@ export const DashboardPage = () => {
       setDateRange(range);
     }
   };
+
+  const numMonths = getMonthDifference(dateRange[0], dateRange[1]);
+
   return (
     <>
-      <h1 className="text-black">Dashboard</h1>
+      <h1 className="text-[var(--text-color)]">Dashboard</h1>
       <br />
       <TimePeriodSelector value={period} onChange={handlePeriodChange} />
       <br />
@@ -61,7 +73,14 @@ export const DashboardPage = () => {
           paymentOverDue={data?.paymentOverdue}
           totalEarnings={data?.totalEarnings}
         />
-        <MoMInvoiceChart data={data?.dashboard} />
+        <br />
+        <Card>
+          <div style={{ fontWeight: "bold" }}>Income Trend</div>
+          <div className="text-[#8134AF]" style={{ fontSize: "1.5rem" }}>
+            Your monthly income and growth for the last {numMonths} months
+          </div>
+          <MoMInvoiceChart data={data?.dashboard} />
+        </Card>
       </AsyncUIWrapper>
     </>
   );

@@ -5,40 +5,56 @@ import { CrownOutlined, CalendarOutlined } from "@ant-design/icons";
 import type { MetricsCardData, MoMData } from "../props";
 
 export const MoMInvoiceChart = React.memo((props: { data: MoMData[] }) => {
+  const data = props.data.map((d) => ({
+    month: d.month,
+    income: d.paid,
+    momGrowth: d.momGrowth,
+  }));
+
   const config = {
-    data: [props.data, props.data],
     xField: "month",
-    yField: ["income", "momGrowth"],
-    geometryOptions: [
+    data,
+    legend: {
+      color: {
+        itemMarker: (v: string) => {
+          if (v === "paid") return "rect";
+          return "smooth";
+        },
+      },
+    },
+    scale: {
+      income: { min: 0 },
+      momGrowth: { min: 0, max: 100 },
+    },
+    children: [
       {
-        geometry: "column",
-        columnWidthRatio: 0.6,
-        color: "#52c41a",
+        type: "interval",
+        yField: "income",
+        style: { fill: "#A743EF" },
       },
       {
-        geometry: "line",
-        smooth: true,
-        color: "#1890ff",
-        lineStyle: { lineWidth: 2 },
-        point: { size: 4, shape: "circle" },
+        type: "line",
+        yField: "momGrowth",
+        shapeField: "smooth",
+        axis: { y: { position: "right" } },
+        style: { stroke: "#7F1E1D", lineWidth: 2 },
+        scale: {
+          color: {
+            relations: [
+              ["income", "#A743EF"],
+              ["momGrowth", "#7F1E1D"],
+            ],
+          },
+        },
       },
     ],
-    yAxis: {
-      paid: { title: { text: "Earnings" } },
-      momGrowth: {
-        title: { text: "MoM Growth (%)" },
-        min: 0,
-        max: 100,
-      },
-    },
-    tooltip: {
-      showMarkers: true,
-      shared: true,
-    },
-    legend: { position: "top-left" },
   };
 
-  return <DualAxes {...config} />;
+  return (
+    <div style={{ width: "100%", height: 400 }}>
+      <DualAxes {...config} />
+    </div>
+  );
 });
 
 type Period = "1M" | "3M" | "1Y" | "CUSTOM";
@@ -123,20 +139,26 @@ export const DashboardMetricsCard = React.memo(
           <Col xs={24} md={8}>
             <Card>
               <div style={{ fontWeight: "bold" }}>{metricCards[0].title}</div>
-              <div style={{ fontSize: "1.5rem" }}>{metricCards[0].value}</div>
+              <div className="text-[#8134AF]" style={{ fontSize: "1.5rem" }}>
+                {metricCards[0].value}
+              </div>
             </Card>
           </Col>
 
           <Col xs={12} md={8}>
             <Card>
               <div style={{ fontWeight: "bold" }}>{metricCards[1].title}</div>
-              <div style={{ fontSize: "1.5rem" }}>{metricCards[1].value}</div>
+              <div className="text-[#8134AF]" style={{ fontSize: "1.5rem" }}>
+                {metricCards[1].value}
+              </div>
             </Card>
           </Col>
           <Col xs={12} md={8}>
             <Card>
               <div style={{ fontWeight: "bold" }}>{metricCards[2].title}</div>
-              <div style={{ fontSize: "1.5rem" }}>{metricCards[2].value}</div>
+              <div className="text-[#8134AF]" style={{ fontSize: "1.5rem" }}>
+                {metricCards[2].value}
+              </div>
             </Card>
           </Col>
         </Row>

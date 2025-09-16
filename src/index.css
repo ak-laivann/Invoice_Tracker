@@ -3,29 +3,110 @@
 @tailwind utilities;
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: white;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --text-color: #213547;
+  --bg-color: #ffffff;
+  --underline-color: #a743ef;
+  --pagination-color: #595959;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.dark {
+  --text-color: #f0f0f0;
+  --bg-color: #1e1e1e;
+  --underline-color: #a743ef;
+  --pagination-color: #fff;
+}
+
+body {
+  color: var(--text-color);
+  background-color: var(--bg-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.ant-tabs {
+  background-color: var(--bg-color);
+}
+
+.ant-tabs-tab {
+  color: var(--text-color);
+  background-color: var(--bg-color);
+}
+
+.ant-tabs-tab-btn {
+  color: var(--text-color);
+}
+
+.ant-tabs-tab:hover .ant-tabs-tab-btn {
+  color: var(--text-color);
+}
+
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.ant-tabs-ink-bar {
+  background-color: var(--underline-color);
+}
+
+.ant-tabs-extra-content .ant-btn {
+  color: var(--text-color);
+  border-color: var(--text-color);
+}
+
+.dark .ant-tabs {
+  background-color: var(--bg-color);
+}
+
+.dark .ant-tabs-tab {
+  color: var(--text-color);
+  border-bottom: 1px solid white;
+  background-color: var(--bg-color);
+}
+
+.dark .ant-tabs-tab-btn {
+  color: var(--text-color);
+}
+
+.dark .ant-tabs-tab:hover .ant-tabs-tab-btn {
+  color: var(--text-color);
+}
+
+.dark .ant-tabs-tab-active .ant-tabs-tab-btn {
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.dark .ant-tabs-ink-bar {
+  background-color: var(--underline-color);
+}
+
+.dark .ant-tabs-extra-content .ant-btn {
+  color: var(--text-color);
+  border-color: var(--text-color);
+}
+
+.ant-pagination {
+  color: var(--pagination-color);
+}
+
+.ant-pagination-item a,
+.ant-pagination-prev a,
+.ant-pagination-next a {
+  color: var(--pagination-color);
+}
+
+.ant-pagination-item-active a {
+  background-color: var(--pagination-color);
+  color: var(--bg-color);
+  font-weight: bold;
+}
+
+.ant-pagination-disabled a {
+  color: var(--pagination-color);
+  opacity: 0.5;
+}
+
+.ant-pagination-options-size-changer .ant-select-selector {
+  color: var(--pagination-color);
+  border-color: var(--pagination-color);
 }

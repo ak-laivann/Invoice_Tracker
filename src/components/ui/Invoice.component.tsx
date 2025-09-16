@@ -258,10 +258,10 @@ export const InvoiceForm = React.memo((props: InvoiceFormProps) => {
         initialValues={{
           ...props.initialValues,
           price: {
-            currency: props.initialValues.price.currency,
-            value: props.initialValues.price.value,
+            currency: props.initialValues?.price?.currency ?? undefined,
+            value: props.initialValues?.price?.value ?? undefined,
           },
-          date: props.initialValues.date
+          date: props.initialValues?.date
             ? dayjs(props.initialValues.date)
             : undefined,
         }}
@@ -272,7 +272,7 @@ export const InvoiceForm = React.memo((props: InvoiceFormProps) => {
           name="clientName"
           rules={[{ required: true, message: "Please enter client name" }]}
         >
-          <Input />
+          <Input placeholder="Enter the client name" />
         </Form.Item>
 
         <Form.Item
@@ -280,7 +280,7 @@ export const InvoiceForm = React.memo((props: InvoiceFormProps) => {
           name={["price", "currency"]}
           rules={[{ required: true, message: "Please select currency" }]}
         >
-          <Select>
+          <Select placeholder="Select the currency">
             <Select.Option value="$">USD</Select.Option>
             <Select.Option value="₹">INR</Select.Option>
             <Select.Option value="€">EUR</Select.Option>
@@ -292,7 +292,11 @@ export const InvoiceForm = React.memo((props: InvoiceFormProps) => {
           name={["price", "value"]}
           rules={[{ required: true, message: "Please enter amount" }]}
         >
-          <InputNumber min={0} style={{ width: "100%" }} />
+          <InputNumber
+            placeholder="Enter the amount"
+            min={0}
+            style={{ width: "100%" }}
+          />
         </Form.Item>
 
         <Form.Item label="Date" name="date">
@@ -304,7 +308,7 @@ export const InvoiceForm = React.memo((props: InvoiceFormProps) => {
           name="status"
           rules={[{ required: true, message: "Please select status" }]}
         >
-          <Select>
+          <Select placeholder="Select the Status">
             {Object.values(Invoice_Status).map((status) => (
               <Select.Option key={status} value={status}>
                 {status}
