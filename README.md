@@ -13,7 +13,7 @@ A lightweight web application for managing and tracking invoices. The project fo
 - **Bulk Upload:** Import multiple invoices at once by uploading an Excel file.
 - **Pagination:** Efficiently navigate through large lists of invoices.
 - **No Login:** The application is intentionally simple, with no authentication required.
-- **Dark Mode:** A partial implementation of a dark mode is included to demonstrate the setup.
+- **Dark Mode:** A partial implementation of a dark mode is included to demonstrate the setup. (Press `Alt` + `Shift` + `D` to toggle dark mode)
 
 ---
 
